@@ -1,5 +1,8 @@
 package io.github.jbea.adminMode
 
+import io.github.jbea.adminMode.commands.AdminChatCommand
+import io.github.jbea.adminMode.commands.AdminModeCommand
+import io.github.jbea.adminMode.commands.VanishCommand
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.plugin.java.JavaPlugin
@@ -21,12 +24,16 @@ class AdminMode : JavaPlugin() {
         Instance = this
         PluginConfig = loadConfig()
 
+        // luck perms integration
         if(PluginConfig.getBoolean("luck-perms-integration.enabled")) {
             LuckPermsPresent = server.pluginManager.getPlugin("LuckPerms") != null
             log((if (LuckPermsPresent) "Found" else "Did NOT Find") + " Luck Perms")
 
             if(PluginConfig.getBoolean("luck-perms-integration.createRoles")) luckPermsSetUp()
         } else LuckPermsPresent = false
+
+        // events
+        server.pluginManager.registerEvents(JoinListener(), this)
 
         log("Plugin enabled")
 

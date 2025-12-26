@@ -1,6 +1,5 @@
 package io.github.jbea.adminMode
 
-import io.github.jbea.adminMode.AdminMode.Companion.NAMESPACE
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -53,7 +52,12 @@ object AdminModes {
 
         if (enable) {
             // hide player
-            AdminMode.Instance.server.onlinePlayers.forEach { if (getPDCVal(it) == Modes.NONE) it.hidePlayer(AdminMode.Instance, player) }
+            AdminMode.Instance.server.onlinePlayers.forEach {
+                if (
+                    !player.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.See.Vanish") ||
+                    getPDCVal(it) == Modes.NONE
+                ) it.hidePlayer(AdminMode.Instance, player)
+            }
         } else {
             // show player
             AdminMode.Instance.server.onlinePlayers.forEach { it.showPlayer(AdminMode.Instance, player) }
@@ -66,20 +70,20 @@ object AdminModes {
         val inventory: Inventory = player.inventory
         val contents: MutableList<ItemStack> = inventory.contents.map { it ?: ItemStack(Material.AIR) }.toMutableList()
 
-        val savedInventoryContents: List<ItemStack?>? = container.get(NamespacedKey(NAMESPACE, "inventory"), PersistentDataType.LIST.listTypeFrom(ItemStackDataType.INSTANCE))
+        val savedInventoryContents: List<ItemStack?>? = container.get(NamespacedKey(AdminMode.NAMESPACE, "inventory"), PersistentDataType.LIST.listTypeFrom(ItemStackDataType.INSTANCE))
 
         // apply data
         if(savedInventoryContents != null) inventory.contents = savedInventoryContents.toTypedArray()
         else inventory.contents = emptyArray<ItemStack>()
 
-        container.set(NamespacedKey(NAMESPACE, "inventory"), PersistentDataType.LIST.listTypeFrom(ItemStackDataType.INSTANCE), contents)
+        container.set(NamespacedKey(AdminMode.NAMESPACE, "inventory"), PersistentDataType.LIST.listTypeFrom(ItemStackDataType.INSTANCE), contents)
     }
 
     fun getPDCVal(player: Player): Modes =
-        player.persistentDataContainer.get(NamespacedKey(NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE) ?: Modes.NONE
+        player.persistentDataContainer.get(NamespacedKey(AdminMode.NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE) ?: Modes.NONE
 
     private fun setPDCVal(player: Player, value: Modes) =
-        player.persistentDataContainer.set(NamespacedKey(NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE, value)
+        player.persistentDataContainer.set(NamespacedKey(AdminMode.NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE, value)
 
 //    private fun updatePDCVal(player: Player, value: Modes): Modes {
 //        val old = getPDCVal(player)

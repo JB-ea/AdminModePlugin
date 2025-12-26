@@ -1,5 +1,7 @@
-package io.github.jbea.adminMode
+package io.github.jbea.adminMode.commands
 
+import io.github.jbea.adminMode.AdminMode
+import io.github.jbea.adminMode.AdminModes
 import io.papermc.paper.command.brigadier.BasicCommand
 import io.papermc.paper.command.brigadier.CommandSourceStack
 import org.bukkit.command.CommandSender
@@ -20,6 +22,6 @@ class AdminModeCommand : BasicCommand {
     }
 
     override fun permission(): String? {
-        return "${AdminMode.PERMISSION_NAMESPACE}.admin.admin"
+        return "${AdminMode.PERMISSION_NAMESPACE}.Admin.Admin"
     }
 }
