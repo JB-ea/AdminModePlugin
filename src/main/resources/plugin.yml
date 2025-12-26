@@ -1,0 +1,17 @@
+name: AdminMode
+version: '1.0-SNAPSHOT'
+main: io.github.jbea.adminMode.AdminMode
+api-version: '1.21.11'
+prefix: AdminMode
+authors: [ JBea ]
+permissions:
+  AdminMode.admin:
+    description: "Operator Permissions"
+    default: op
+    children:
+      permission.node.child: true
+  AdminMode.seeChat:
+    description: "Can See admin chat but not use it"
+    default: false
+    children:
+      permission.node.child: true
