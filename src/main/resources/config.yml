@@ -1,0 +1,6 @@
+enabled: true
+luck-perms-integration:
+  enabled: true
+  createRoles: false
+  adminRole: "admin-no-perms"
+  adminPermsRole: "admin-with-perms"
