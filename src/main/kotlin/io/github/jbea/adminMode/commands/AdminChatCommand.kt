@@ -36,7 +36,7 @@ class AdminChatCommand : BasicCommand {
         }
     }
 
-    public override fun canUse(sender: CommandSender): Boolean {
+    override fun canUse(sender: CommandSender): Boolean {
         val permission: String? = this.permission()
         return permission == null || sender.hasPermission(permission)
     }

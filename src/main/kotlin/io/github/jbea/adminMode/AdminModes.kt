@@ -1,10 +1,12 @@
 package io.github.jbea.adminMode
 
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
+import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.persistence.PersistentDataContainer
@@ -47,9 +49,13 @@ object AdminModes {
         }
     }
 
-    private fun vanish(player: Player, enable: Boolean = true) {
-        val container: PersistentDataContainer = player.persistentDataContainer;
+    fun join(player: Player, event: PlayerJoinEvent?) {
+        val joinMode = getJoinMode(player)
+        if (event != null && joinMode == Modes.VANISH) event.joinMessage(Component.empty())
+        if (joinMode != getPDCVal(player)) setMode(player, joinMode)
+    }
 
+    private fun vanish(player: Player, enable: Boolean = true) {
         if (enable) {
             // hide player
             AdminMode.Instance.server.onlinePlayers.forEach {
@@ -79,11 +85,13 @@ object AdminModes {
         container.set(NamespacedKey(AdminMode.NAMESPACE, "inventory"), PersistentDataType.LIST.listTypeFrom(ItemStackDataType.INSTANCE), contents)
     }
 
-    fun getPDCVal(player: Player): Modes =
-        player.persistentDataContainer.get(NamespacedKey(AdminMode.NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE) ?: Modes.NONE
+    fun getPDCVal(player: Player): Modes = player.persistentDataContainer.get(NamespacedKey(AdminMode.NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE) ?: Modes.NONE
 
-    private fun setPDCVal(player: Player, value: Modes) =
-        player.persistentDataContainer.set(NamespacedKey(AdminMode.NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE, value)
+    private fun setPDCVal(player: Player, value: Modes) = player.persistentDataContainer.set(NamespacedKey(AdminMode.NAMESPACE, "admin_mode"), AdminModesDataType.INSTANCE, value)
+
+    fun getJoinMode(player: Player) = player.persistentDataContainer.get(NamespacedKey(AdminMode.NAMESPACE, "admin_join_mode"), AdminModesDataType.INSTANCE) ?: Modes.NONE
+
+    fun setJoinMode(player: Player, value: Modes) = player.persistentDataContainer.set(NamespacedKey(AdminMode.NAMESPACE, "admin_join_mode"), AdminModesDataType.INSTANCE, value)
 
 //    private fun updatePDCVal(player: Player, value: Modes): Modes {
 //        val old = getPDCVal(player)

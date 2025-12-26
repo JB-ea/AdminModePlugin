@@ -8,12 +8,17 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 
-class AdminModeCommand : BasicCommand {
+class AdminJoinModeCommand : BasicCommand {
     override fun execute(source: CommandSourceStack, args: Array<String>) {
         val executor: Entity = source.executor ?: return
 
         if(executor is Player && executor.isOnline)
-            AdminModes.setMode(executor, AdminModes.Modes.ADMIN)
+            AdminModes.setJoinMode(executor, AdminModes.Modes.valueOf(args[0].uppercase()))
+    }
+
+    override fun suggest(source: CommandSourceStack, args: Array<String>): MutableCollection<String> {
+        if (args.size > 1) return mutableSetOf()
+        return AdminModes.Modes.entries.map { it.name.lowercase() }.toMutableSet()
     }
 
     override fun canUse(sender: CommandSender): Boolean {
@@ -22,6 +27,6 @@ class AdminModeCommand : BasicCommand {
     }
 
     override fun permission(): String? {
-        return "${AdminMode.PERMISSION_NAMESPACE}.Admin.Admin"
+        return "${AdminMode.PERMISSION_NAMESPACE}.Admin.JoinMode"
     }
 }

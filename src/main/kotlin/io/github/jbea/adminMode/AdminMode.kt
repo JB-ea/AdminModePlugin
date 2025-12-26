@@ -1,6 +1,7 @@
 package io.github.jbea.adminMode
 
 import io.github.jbea.adminMode.commands.AdminChatCommand
+import io.github.jbea.adminMode.commands.AdminJoinModeCommand
 import io.github.jbea.adminMode.commands.AdminModeCommand
 import io.github.jbea.adminMode.commands.VanishCommand
 import org.bukkit.Bukkit
@@ -34,12 +35,14 @@ class AdminMode : JavaPlugin() {
 
         // events
         server.pluginManager.registerEvents(JoinListener(), this)
+        server.pluginManager.registerEvents(LeaveListener(), this)
 
         log("Plugin enabled")
 
         registerCommand("admin", AdminModeCommand())
         registerCommand("vanish", VanishCommand())
         registerCommand("adminChat", AdminChatCommand())
+        registerCommand("joinMode", AdminJoinModeCommand())
     }
 
     fun loadConfig(): YamlConfiguration {

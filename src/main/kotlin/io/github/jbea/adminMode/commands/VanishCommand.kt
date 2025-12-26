@@ -16,7 +16,7 @@ class VanishCommand : BasicCommand {
             AdminModes.setMode(executor, AdminModes.Modes.VANISH)
     }
 
-    public override fun canUse(sender: CommandSender): Boolean {
+    override fun canUse(sender: CommandSender): Boolean {
         val permission: String? = this.permission()
         return permission == null || sender.hasPermission(permission)
     }

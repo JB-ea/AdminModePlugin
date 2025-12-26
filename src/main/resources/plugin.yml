@@ -5,25 +5,28 @@ api-version: '1.21.11'
 prefix: AdminMode
 authors: [ JBea ]
 permissions:
-  AdminMode.Admin:
-    description: "Operator Permissions"
-    default: op
-    children:
-      permission.node.child: true
-#   Sub Perms
-    Chat:
-      description: "Can Use admin chat (if in admin/vanish mode)"
+  AdminMode:
     Admin:
-      description: "Can enter admin mode"
-    Vanish:
-      description: "Can enter vanish mode"
+      description: "Operator Permissions"
+      default: op
+      children:
+        permission.node.child: true
+  #   Sub Perms
+      Chat:
+        description: "Can Use admin chat (if in admin/vanish mode)"
+      JoinMode:
+        description: "Can set mode to enter on join"
+      Admin:
+        description: "Can enter admin mode"
+      Vanish:
+        description: "Can enter vanish mode"
 
-  AdminMode.See:
-    default: op
-    children:
-      permission.node.child: true
-#   Sub Perms
-    Chat:
-      description: "Can See admin chat but not use it"
-    Vanish:
-      description: "Can See vanished players even if not in vanish"
+    See:
+      default: op
+      children:
+        permission.node.child: true
+  #   Sub Perms
+      Chat:
+        description: "Can See admin chat but not use it"
+      Vanish:
+        description: "Can See vanished players even if not in vanish"
