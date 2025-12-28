@@ -1,6 +1,7 @@
 package io.github.jbea.adminMode
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -20,7 +21,7 @@ object AdminModes {
         val newMode = if(oldMode == mode) Modes.NONE else mode
         setPDCVal(player, newMode)
 
-        val luckPermsCommand: String = "lp user ${player.name} parent set"
+        val luckPermsCommand: String = "lp user ${player.name} parent set "
         val adminNoPermsCommand: String = luckPermsCommand + (AdminMode.PluginConfig.getString("luck-perms-integration.adminRole") ?: "admin-no-perms")
         val adminWithPermsCommand: String = luckPermsCommand + (AdminMode.PluginConfig.getString("luck-perms-integration.adminPermsRole") ?: "admin-with-perms")
 
@@ -29,6 +30,11 @@ object AdminModes {
                 player.gameMode = GameMode.SURVIVAL
                 vanish(player, false)
                 if(oldMode != Modes.NONE) swapInventory(player)
+
+                //messages
+                player.sendMessage(Component.text("Staff mode disabled!").color(NamedTextColor.RED))
+                player.sendActionBar(Component.text("Staff mode disabled!").color(NamedTextColor.RED))
+
                 // luck perms integration
                 if(AdminMode.LuckPermsPresent) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), adminNoPermsCommand)
             }
@@ -36,6 +42,11 @@ object AdminModes {
                 player.gameMode = GameMode.CREATIVE
                 vanish(player, false)
                 if(oldMode != Modes.VANISH) swapInventory(player)
+
+                //messages
+                player.sendMessage(Component.text("Staff mode enabled!").color(NamedTextColor.GREEN))
+                player.sendActionBar(Component.text("Staff mode enabled!").color(NamedTextColor.GREEN))
+
                 // luck perms integration
                 if(AdminMode.LuckPermsPresent) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), adminWithPermsCommand)
             }
@@ -43,6 +54,11 @@ object AdminModes {
                 player.gameMode = GameMode.SPECTATOR
                 vanish(player, true)
                 if(oldMode != Modes.ADMIN) swapInventory(player)
+
+                //messages
+                player.sendMessage(Component.text("Vanished!").color(NamedTextColor.DARK_PURPLE))
+                player.sendActionBar(Component.text("Vanished!").color(NamedTextColor.DARK_PURPLE))
+
                 // luck perms integration
                 if(AdminMode.LuckPermsPresent) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), adminWithPermsCommand)
             }
