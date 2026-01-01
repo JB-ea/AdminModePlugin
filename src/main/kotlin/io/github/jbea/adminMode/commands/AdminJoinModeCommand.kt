@@ -12,8 +12,10 @@ class AdminJoinModeCommand : BasicCommand {
     override fun execute(source: CommandSourceStack, args: Array<String>) {
         val executor: Entity = source.executor ?: return
 
-        if(executor is Player && executor.isOnline)
+        if(executor is Player && executor.isOnline) {
+            executor.sendMessage("Set Join Mode to: ${args[0]}")
             AdminModes.setJoinMode(executor, AdminModes.Modes.valueOf(args[0].uppercase()))
+        }
     }
 
     override fun suggest(source: CommandSourceStack, args: Array<String>): MutableCollection<String> {

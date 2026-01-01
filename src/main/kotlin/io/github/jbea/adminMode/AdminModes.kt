@@ -31,6 +31,8 @@ object AdminModes {
                 vanish(player, false)
                 if(oldMode != Modes.NONE) swapInventory(player)
 
+                updateVanish(player)
+
                 //messages
                 player.sendMessage(Component.text("Staff mode disabled!").color(NamedTextColor.RED))
                 player.sendActionBar(Component.text("Staff mode disabled!").color(NamedTextColor.RED))
@@ -43,6 +45,8 @@ object AdminModes {
                 vanish(player, false)
                 if(oldMode != Modes.VANISH) swapInventory(player)
 
+                updateVanish(player)
+
                 //messages
                 player.sendMessage(Component.text("Staff mode enabled!").color(NamedTextColor.GREEN))
                 player.sendActionBar(Component.text("Staff mode enabled!").color(NamedTextColor.GREEN))
@@ -54,6 +58,8 @@ object AdminModes {
                 player.gameMode = GameMode.SPECTATOR
                 vanish(player, true)
                 if(oldMode != Modes.ADMIN) swapInventory(player)
+
+                updateVanish(player)
 
                 //messages
                 player.sendMessage(Component.text("Vanished!").color(NamedTextColor.DARK_PURPLE))
@@ -83,6 +89,19 @@ object AdminModes {
         } else {
             // show player
             AdminMode.Instance.server.onlinePlayers.forEach { it.showPlayer(AdminMode.Instance, player) }
+        }
+    }
+
+    fun updateVanish(forPlayer: Player) {
+        AdminMode.Instance.server.onlinePlayers.forEach {
+            if(
+                !(
+                    forPlayer.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.See.Vanish") ||
+                    getPDCVal(forPlayer) == Modes.VANISH
+                ) &&
+                getPDCVal(it) == Modes.VANISH
+            ) forPlayer.hidePlayer(AdminMode.Instance, it)
+            else forPlayer.showPlayer(AdminMode.Instance, it)
         }
     }
 

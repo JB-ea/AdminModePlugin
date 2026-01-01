@@ -22,7 +22,7 @@ class AdminChatCommand : BasicCommand {
                 return
             }
 
-            val receivers: List<Player> = AdminMode.Instance.server.onlinePlayers.filter { (AdminModes.getPDCVal(it) != AdminModes.Modes.NONE || executor.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.seeChat")) }
+            val receivers: List<Player> = AdminMode.Instance.server.onlinePlayers.filter { (AdminModes.getPDCVal(it) != AdminModes.Modes.NONE || it.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.See.Chat")) }
             val audience: Audience = Audience.audience(receivers)
 
             val user: String = executor.name;

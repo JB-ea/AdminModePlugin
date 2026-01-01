@@ -1,5 +1,6 @@
 package io.github.jbea.adminMode
 
+import io.github.jbea.adminMode.AdminModes
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerJoinEvent
@@ -13,12 +14,7 @@ class JoinListener : Listener {
 
             if(player.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.Admin.JoinMode")) AdminModes.join(player, event)
 
-            AdminMode.Instance.server.onlinePlayers.forEach {
-                if(
-                    !player.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.See.Vanish") &&
-                    AdminModes.getPDCVal(it) == AdminModes.Modes.VANISH
-                ) player.hidePlayer(AdminMode.Instance, it)
-            }
+            AdminModes.updateVanish(player)
         }
     }
 }

@@ -39,9 +39,9 @@ class AdminMode : JavaPlugin() {
 
         log("Plugin enabled")
 
-        registerCommand("admin", AdminModeCommand())
-        registerCommand("vanish", VanishCommand())
-        registerCommand("adminChat", AdminChatCommand())
+        registerCommand("admin", listOf("a"), AdminModeCommand())
+        registerCommand("vanish", listOf("v"), VanishCommand())
+        registerCommand("adminChat", listOf("ac"), AdminChatCommand())
         registerCommand("joinMode", AdminJoinModeCommand())
     }
 
@@ -65,7 +65,7 @@ class AdminMode : JavaPlugin() {
 
         // No Perms Group
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp creategroup $adminNoPerms")
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp group $adminNoPerms permission set adminmode.admin true")
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp group $adminNoPerms permission set adminmode.* true")
 
         // With Perms Group
         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp creategroup $adminWithPerms")
