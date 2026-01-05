@@ -4,29 +4,36 @@ main: io.github.jbea.adminMode.AdminMode
 api-version: '1.21.11'
 prefix: AdminMode
 authors: [ JBea ]
+softdepend: [LuckPerms]
 permissions:
   AdminMode:
+    HelpChat:
+      description: "Can send a message to all admins"
+      default: op
+      children:
+        Message:
+          description: "Can message into help chat"
+          default: true
+        See:
+          description: "Can see messages sent in help chat"
+
     Admin:
       description: "Operator Permissions"
       default: op
       children:
-        permission.node.child: true
-  #   Sub Perms
-      Chat:
-        description: "Can Use admin chat (if in admin/vanish mode)"
-      JoinMode:
-        description: "Can set mode to enter on join"
-      Admin:
-        description: "Can enter admin mode"
-      Vanish:
-        description: "Can enter vanish mode"
+        Chat:
+          description: "Can Use admin chat (if in admin/vanish mode)"
+        JoinMode:
+          description: "Can set mode to enter on join"
+        Admin:
+          description: "Can enter admin mode"
+        Vanish:
+          description: "Can enter vanish mode"
 
     See:
       default: op
       children:
-        permission.node.child: true
-  #   Sub Perms
-      Chat:
-        description: "Can See admin chat but not use it"
-      Vanish:
-        description: "Can See vanished players even if not in vanish"
+        Chat:
+          description: "Can See admin chat but not use it"
+        Vanish:
+          description: "Can See vanished players even if not in vanish"

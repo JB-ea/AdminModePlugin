@@ -1,6 +1,8 @@
 enabled: true
+
+# only works if luck perms is installed on the server
 luck-perms-integration:
   enabled: true
-  createRoles: false
-  adminRole: "admin-no-perms"
-  adminPermsRole: "admin-with-perms"
+  createGroups: false
+  adminGroup: "admin"
+  permsGroup: "perms"

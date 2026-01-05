@@ -11,28 +11,29 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
 
-class AdminChatCommand : BasicCommand {
+class RequestHelpCommand : BasicCommand {
     override fun execute(source: CommandSourceStack, args: Array<String>) {
-        if(args.isEmpty()) return
         val executor: Entity = source.executor ?: return
 
         if(executor is Player && executor.isOnline) {
-            if(AdminModes.getPDCVal(executor) == AdminModes.Modes.NONE) {
-                AdminMode.sendMessage(executor,"You are not in admin mode.")
-                return
-            }
 
-            val receivers: List<Player> = AdminMode.Instance.server.onlinePlayers.filter { (AdminModes.getPDCVal(it) != AdminModes.Modes.NONE || it.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.See.Chat")) }
+            val receivers: List<Player> = AdminMode.Instance.server.onlinePlayers.filter { (AdminModes.getPDCVal(it) != AdminModes.Modes.NONE || it.hasPermission("${AdminMode.PERMISSION_NAMESPACE}.HelpChat.See")) }
             val audience: Audience = Audience.audience(receivers)
+
+            var visibleAdmins: Int = 0;
+            for (player in receivers) if(AdminModes.getPDCVal(player) != AdminModes.Modes.VANISH) visibleAdmins++
+
+            if(visibleAdmins == 0) AdminMode.sendMessage(executor,"There are no Admins online but your Help Request has still been sent")
+            else AdminMode.sendMessage(executor,"Your Help Request has been sent")
 
             val user: String = executor.name;
             var message: String = ""
             args.forEach { message += "$it " }
 
-            val messageComments: Component = MiniMessage.miniMessage().deserialize("<green><b>Admin Chat: $user »</b></green> $message")
+            val messageComments: Component = MiniMessage.miniMessage()
+                .deserialize("<click:run_command:'tp $user'><hover:show_text:'Teleport To Player'><blue><b><red>$user</red> asked for Help ${ if(message.isNotEmpty()) "»" else ""}</b></blue> $message")
 
             audience.sendMessage(messageComments)
-
         }
     }
 
@@ -42,6 +43,6 @@ class AdminChatCommand : BasicCommand {
     }
 
     override fun permission(): String? {
-        return "${AdminMode.PERMISSION_NAMESPACE}.Admin.Chat"
+        return "${AdminMode.PERMISSION_NAMESPACE}.HelpChat.Message"
     }
 }

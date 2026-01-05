@@ -1,21 +1,31 @@
 package io.github.jbea.adminMode
 
-import io.github.jbea.adminMode.commands.AdminChatCommand
-import io.github.jbea.adminMode.commands.AdminJoinModeCommand
-import io.github.jbea.adminMode.commands.AdminModeCommand
-import io.github.jbea.adminMode.commands.VanishCommand
+import io.github.jbea.adminMode.commands.*
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.luckperms.api.LuckPerms
+import net.luckperms.api.node.Node
+import net.luckperms.api.node.types.PrefixNode
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.YamlConfiguration
+import org.bukkit.entity.Player
+import org.bukkit.plugin.RegisteredServiceProvider
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
 
 class AdminMode : JavaPlugin() {
     companion object {
         lateinit var Instance: AdminMode
-        var LuckPermsPresent: Boolean = false
         lateinit var PluginConfig: YamlConfiguration
         const val NAMESPACE: String = "admin_mode"
         const val PERMISSION_NAMESPACE: String = "AdminMode"
+
+        object LP {
+            var Instance: LuckPerms? = null
+
+            var adminGroup: String = PluginConfig.getString("luck-perms-integration.adminGroup") ?: "admin"
+            var permsGroup: String = PluginConfig.getString("luck-perms-integration.permsGroup") ?: "perms"
+        }
+        fun sendMessage(player: Player, message: String) = player.sendMessage(MiniMessage.miniMessage().deserialize("[<red>AdminMode</red>] $message"))
     }
 
     fun log(message: String) = logger.info(message)
@@ -26,18 +36,15 @@ class AdminMode : JavaPlugin() {
         PluginConfig = loadConfig()
 
         // luck perms integration
-        if(PluginConfig.getBoolean("luck-perms-integration.enabled")) {
-            LuckPermsPresent = server.pluginManager.getPlugin("LuckPerms") != null
-            log((if (LuckPermsPresent) "Found" else "Did NOT Find") + " Luck Perms")
-
-            if(PluginConfig.getBoolean("luck-perms-integration.createRoles")) luckPermsSetUp()
-        } else LuckPermsPresent = false
+        if(PluginConfig.getBoolean("luck-perms-integration.enabled")) luckPermsSetUp()
 
         // events
         server.pluginManager.registerEvents(JoinListener(), this)
         server.pluginManager.registerEvents(LeaveListener(), this)
 
         log("Plugin enabled")
+
+        registerCommand("requesthelp", listOf("rh", "messageadmin", "ma"), RequestHelpCommand())
 
         registerCommand("admin", listOf("a"), AdminModeCommand())
         registerCommand("vanish", listOf("v"), VanishCommand())
@@ -60,16 +67,30 @@ class AdminMode : JavaPlugin() {
     }
 
     fun luckPermsSetUp() {
-        val adminNoPerms: String = PluginConfig.getString("luck-perms-integration.adminRole") ?: "admin-no-perms"
-        val adminWithPerms: String = PluginConfig.getString("luck-perms-integration.adminPermsRole") ?: "admin-with-perms"
+        val provider: RegisteredServiceProvider<LuckPerms?>? = Bukkit.getServicesManager().getRegistration<LuckPerms?>(LuckPerms::class.java)
+        if (provider != null) LP.Instance = provider.getProvider()
 
-        // No Perms Group
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp creategroup $adminNoPerms")
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp group $adminNoPerms permission set adminmode.* true")
+        LP.Instance ?: return
 
-        // With Perms Group
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp creategroup $adminWithPerms")
-        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "lp group $adminWithPerms permission set * true")
+        if(PluginConfig.getBoolean("luck-perms-integration.createGroups")) {
+            // admin group
+            if(LP.Instance!!.groupManager.getGroup(LP.adminGroup) == null) {
+                log("Create Admin Group: ${LP.adminGroup}")
+                LP.Instance!!.groupManager.modifyGroup(LP.adminGroup) {
+                    it.data().add(Node.builder("adminmode").value(true).build())
+                    it.data().add(Node.builder("adminmode.*").value(true).build())
+                    it.data().add(PrefixNode.builder("&4[Admin]&r ", 1).build())
+                }
+            }
+
+            // perms group
+            if(LP.Instance!!.groupManager.getGroup(LP.permsGroup) == null) {
+                log("Create Perms Group: ${LP.permsGroup}")
+                LP.Instance!!.groupManager.modifyGroup(LP.permsGroup) {
+                    it.data().add(Node.builder("*").value(true).build())
+                }
+            }
+        }
     }
 
     override fun onDisable() {

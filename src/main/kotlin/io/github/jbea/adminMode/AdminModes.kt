@@ -1,7 +1,10 @@
 package io.github.jbea.adminMode
 
+import io.github.jbea.adminMode.AdminMode.Companion.LP
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.luckperms.api.node.Node
+import net.luckperms.api.node.types.InheritanceNode
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Material
@@ -21,10 +24,6 @@ object AdminModes {
         val newMode = if(oldMode == mode) Modes.NONE else mode
         setPDCVal(player, newMode)
 
-        val luckPermsCommand: String = "lp user ${player.name} parent set "
-        val adminNoPermsCommand: String = luckPermsCommand + (AdminMode.PluginConfig.getString("luck-perms-integration.adminRole") ?: "admin-no-perms")
-        val adminWithPermsCommand: String = luckPermsCommand + (AdminMode.PluginConfig.getString("luck-perms-integration.adminPermsRole") ?: "admin-with-perms")
-
         when(newMode) {
             Modes.NONE -> {
                 player.gameMode = GameMode.SURVIVAL
@@ -34,11 +33,13 @@ object AdminModes {
                 updateVanish(player)
 
                 //messages
-                player.sendMessage(Component.text("Staff mode disabled!").color(NamedTextColor.RED))
+                AdminMode.sendMessage(player, "<red>Staff mode disabled!</red>")
                 player.sendActionBar(Component.text("Staff mode disabled!").color(NamedTextColor.RED))
 
                 // luck perms integration
-                if(AdminMode.LuckPermsPresent) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), adminNoPermsCommand)
+                if(LP.Instance != null) LP.Instance!!.userManager.modifyUser(player.uniqueId) {
+                    it.data().add(InheritanceNode.builder(LP.permsGroup).value(false).build())
+                }
             }
             Modes.ADMIN -> {
                 player.gameMode = GameMode.CREATIVE
@@ -48,11 +49,13 @@ object AdminModes {
                 updateVanish(player)
 
                 //messages
-                player.sendMessage(Component.text("Staff mode enabled!").color(NamedTextColor.GREEN))
+                AdminMode.sendMessage(player, "<green>Staff mode enabled!</green>")
                 player.sendActionBar(Component.text("Staff mode enabled!").color(NamedTextColor.GREEN))
 
                 // luck perms integration
-                if(AdminMode.LuckPermsPresent) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), adminWithPermsCommand)
+                if(LP.Instance != null) LP.Instance!!.userManager.modifyUser(player.uniqueId) {
+                    it.data().add(InheritanceNode.builder(LP.permsGroup).value(true).build())
+                }
             }
             Modes.VANISH -> {
                 player.gameMode = GameMode.SPECTATOR
@@ -62,11 +65,13 @@ object AdminModes {
                 updateVanish(player)
 
                 //messages
-                player.sendMessage(Component.text("Vanished!").color(NamedTextColor.DARK_PURPLE))
+                AdminMode.sendMessage(player, "<dark_purple>Vanished!</dark_purple>")
                 player.sendActionBar(Component.text("Vanished!").color(NamedTextColor.DARK_PURPLE))
 
                 // luck perms integration
-                if(AdminMode.LuckPermsPresent) Bukkit.dispatchCommand(Bukkit.getConsoleSender(), adminWithPermsCommand)
+                if(LP.Instance != null) LP.Instance!!.userManager.modifyUser(player.uniqueId) {
+                    it.data().add(InheritanceNode.builder(LP.permsGroup).value(true).build())
+                }
             }
         }
     }

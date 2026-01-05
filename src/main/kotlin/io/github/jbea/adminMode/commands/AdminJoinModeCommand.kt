@@ -13,7 +13,7 @@ class AdminJoinModeCommand : BasicCommand {
         val executor: Entity = source.executor ?: return
 
         if(executor is Player && executor.isOnline) {
-            executor.sendMessage("Set Join Mode to: ${args[0]}")
+            AdminMode.sendMessage(executor,"Set Join Mode to: ${args[0]}")
             AdminModes.setJoinMode(executor, AdminModes.Modes.valueOf(args[0].uppercase()))
         }
     }
