@@ -1,12 +1,3 @@
-<style>
-p:has(+ ul) {
-  margin-bottom: 0;
-}
-p + ul {
-  margin-top: 0;
-}
-</style>
-
 > [!NOTE]
 > **This plugin is designed to work in conjunction with [Luck Perms](https://luckperms.net) but will still work without, Just with less features ([*Using Without Luck Perms*](#using-without-luck-perms))**.
 
