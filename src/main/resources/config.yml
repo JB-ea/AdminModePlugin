@@ -1,6 +1,6 @@
 enabled: true
 
-# only works if luck perms is installed on the server
+# Only works if luck perms is installed on the server
 luck-perms-integration:
   enabled: true
   createGroups: false

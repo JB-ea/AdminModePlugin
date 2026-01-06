@@ -49,7 +49,7 @@ class AdminMode : JavaPlugin() {
         registerCommand("admin", listOf("a"), AdminModeCommand())
         registerCommand("vanish", listOf("v"), VanishCommand())
         registerCommand("adminChat", listOf("ac"), AdminChatCommand())
-        registerCommand("joinMode", AdminJoinModeCommand())
+        registerCommand("joinMode", listOf("jm"), AdminJoinModeCommand())
     }
 
     fun loadConfig(): YamlConfiguration {
