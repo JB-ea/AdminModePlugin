@@ -42,7 +42,6 @@ class AdminMode : JavaPlugin() {
         server.pluginManager.registerEvents(JoinListener(), this)
         server.pluginManager.registerEvents(LeaveListener(), this)
 
-        log("Plugin enabled")
 
         registerCommand("requesthelp", listOf("rh", "messageadmin", "ma"), RequestHelpCommand())
 
@@ -50,19 +49,17 @@ class AdminMode : JavaPlugin() {
         registerCommand("vanish", listOf("v"), VanishCommand())
         registerCommand("adminChat", listOf("ac"), AdminChatCommand())
         registerCommand("joinMode", listOf("jm"), AdminJoinModeCommand())
+
+        log("Plugin enabled")
     }
 
     fun loadConfig(): YamlConfiguration {
         val configFile = File(dataFolder, "config.yml")
-        if (!configFile.exists()) {
-            saveResource("config.yml", true)
-        }
+        if (!configFile.exists()) saveResource("config.yml", true)
         val config = YamlConfiguration.loadConfiguration(configFile)
 
         val pluginManager = Bukkit.getPluginManager()
-        if (!config.getBoolean("enabled")) {
-            pluginManager.disablePlugin(this)
-        }
+        if (!config.getBoolean("enabled")) pluginManager.disablePlugin(this)
         return config
     }
 
